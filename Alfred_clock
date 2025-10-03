@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alfred James Cooper-Matthews</title>
+<style>
+body { 
+  font-family: Arial, sans-serif; 
+  background: #f9f6f2; 
+  color: #333; 
+  text-align:center; 
+  padding:30px;
+}
+h1 { 
+  font-size: 2.5em; 
+  margin-bottom:10px; 
+}
+.dob-section { 
+  font-size:1.2em; 
+  margin-bottom:20px;
+}
+.dob-section div { 
+  margin:5px 0;
+}
+.dob-section strong { 
+  display:inline-block; 
+  width:120px;
+}
+.clock { 
+  font-size:2em; 
+  font-weight:bold; 
+  margin-top:30px; 
+}
+.sub-clock { 
+  font-size:1.2em; 
+  color:#666; 
+  margin-top:6px;
+}
+</style>
+</head>
+<body>
+
+<h1>Alfred James Cooper-Matthews</h1>
+
+<div class="dob-section">
+  <div><strong>D.O.B.:</strong> 11 September 2025</div>
+  <div><strong>Born:</strong> City Hospital (Nottingham)</div>
+  <div><strong>Time:</strong> 12:31pm (GMT)</div>
+  <div><strong>Birthweight:</strong> 8lb 7oz</div>
+  <div><strong>Star sign:</strong> Virgo ♍</div>
+  <div><strong>Chinese zodiac:</strong> Snake 🐍</div>
+</div>
+
+<div class="clock" id="ageClock">Loading…</div>
+<div class="sub-clock" id="subClock"></div>
+
+<script>
+const birthDate = new Date(Date.UTC(2025, 8, 11, 12, 31, 0)); // UTC
+
+function updateClock() {
+    const now = new Date();
+    if (now < birthDate) {
+        document.getElementById('ageClock').textContent = 'Birth date is in the future.';
+        document.getElementById('subClock').textContent = '';
+        return;
+    }
+
+    const diffMs = now - birthDate;
+
+    // Total days since birth
+    const totalDays = Math.floor(diffMs / (1000*60*60*24));
+    
+    // Approximate years, months, days
+    const years = Math.floor(totalDays / 365.25);
+    const remainingDaysAfterYears = totalDays - Math.floor(years * 365.25);
+    const months = Math.floor(remainingDaysAfterYears / 30.44);
+    const days = Math.floor(remainingDaysAfterYears - months * 30.44);
+
+    // Remaining hours and minutes within the current day
+    const msToday = diffMs % (1000*60*60*24);
+    const hours = Math.floor(msToday / (1000*60*60));
+    const minutes = Math.floor((msToday % (1000*60*60)) / (1000*60));
+
+    // Update HTML
+    document.getElementById('ageClock').textContent = `${years} years, ${months} months, ${days} days`;
+    document.getElementById('subClock').textContent = `${hours} hours, ${minutes} minutes`;
+}
+
+setInterval(updateClock, 60000);
+updateClock();
+</script>
+
+</body>
+</html>
