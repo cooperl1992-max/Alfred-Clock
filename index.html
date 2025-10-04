@@ -1,95 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Alfred James Cooper-Matthews</title>
-<style>
-body { 
-  font-family: Arial, sans-serif; 
-  background: #f9f6f2; 
-  color: #333; 
-  text-align:center; 
-  padding:30px;
-}
-h1 { 
-  font-size: 2.5em; 
-  margin-bottom:10px; 
-}
-.dob-section { 
-  font-size:1.2em; 
-  margin-bottom:20px;
-}
-.dob-section div { 
-  margin:5px 0;
-}
-.dob-section strong { 
-  display:inline-block; 
-  width:120px;
-}
-.clock { 
-  font-size:2em; 
-  font-weight:bold; 
-  margin-top:30px; 
-}
-.sub-clock { 
-  font-size:1.2em; 
-  color:#666; 
-  margin-top:6px;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alfred James Cooper-Matthews - Age Clock</title>
+  <style>
+    body {
+      background-color: #f2f2f2;
+      color: #333;
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      padding-top: 100px;
+    }
+    h1 {
+      font-size: 2.4em;
+      margin-bottom: 10px;
+    }
+    .details {
+      font-size: 1.2em;
+      line-height: 1.8em;
+    }
+    .details span {
+      font-weight: bold;
+    }
+    #age {
+      font-size: 1.5em;
+      margin-top: 30px;
+      line-height: 1.5em;
+    }
+  </style>
 </head>
 <body>
+  <h1>Alfred James Cooper-Matthews</h1>
 
-<h1>Alfred James Cooper-Matthews</h1>
+  <div class="details">
+    <div><span>D.O.B 👶:</span> 12th September 2025</div>
+    <div><span>Birthplace 🏥:</span> City Hospital, Nottingham</div>
+    <div><span>Time ⏰:</span> 12:31 pm (GMT)</div>
+    <div><span>Birthweight ⚖️:</span> 8 lb 7 oz</div>
+    <div><span>Star Sign ♍:</span> Virgo</div>
+    <div><span>Chinese Zodiac 🐉:</span> Dragon</div>
+  </div>
 
-<div class="dob-section">
-  <div><strong>D.O.B.:</strong> 11 September 2025</div>
-  <div><strong>Born:</strong> City Hospital (Nottingham)</div>
-  <div><strong>Time:</strong> 12:31pm (GMT)</div>
-  <div><strong>Birthweight:</strong> 8lb 7oz</div>
-  <div><strong>Star sign:</strong> Virgo ♍</div>
-  <div><strong>Chinese zodiac:</strong> Snake 🐍</div>
-</div>
+  <h2 id="age"></h2>
 
-<div class="clock" id="ageClock">Loading…</div>
-<div class="sub-clock" id="subClock"></div>
+  <script>
+    function updateAge() {
+      const birthDate = new Date("2025-09-12T12:31:00+01:00"); // Local UK time
+      const now = new Date();
 
-<script>
-const birthDate = new Date(Date.UTC(2025, 8, 11, 12, 31, 0)); // UTC
+      let years = now.getFullYear() - birthDate.getFullYear();
+      let months = now.getMonth() - birthDate.getMonth();
+      let days = now.getDate() - birthDate.getDate();
 
-function updateClock() {
-    const now = new Date();
-    if (now < birthDate) {
-        document.getElementById('ageClock').textContent = 'Birth date is in the future.';
-        document.getElementById('subClock').textContent = '';
-        return;
+      if (days < 0) {
+        const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+        days += prevMonth.getDate();
+        months--;
+      }
+      if (months < 0) {
+        months += 12;
+        years--;
+      }
+
+      // Calculate remaining hours and minutes
+      const thisMonthDate = new Date(birthDate);
+      thisMonthDate.setFullYear(birthDate.getFullYear() + years);
+      thisMonthDate.setMonth(birthDate.getMonth() + months);
+      thisMonthDate.setDate(birthDate.getDate() + days);
+
+      const diffMs = now - thisMonthDate;
+      const hours = Math.floor(diffMs / (1000 * 60 * 60));
+      const minutes = Math.floor((diffMs / (1000 * 60)) % 60);
+
+      document.getElementById("age").innerHTML =
+        `${years} years, ${months} months, ${days} days<br>` +
+        `${hours} hours, ${minutes} minutes`;
     }
 
-    const diffMs = now - birthDate;
-
-    // Total days since birth
-    const totalDays = Math.floor(diffMs / (1000*60*60*24));
-    
-    // Approximate years, months, days
-    const years = Math.floor(totalDays / 365.25);
-    const remainingDaysAfterYears = totalDays - Math.floor(years * 365.25);
-    const months = Math.floor(remainingDaysAfterYears / 30.44);
-    const days = Math.floor(remainingDaysAfterYears - months * 30.44);
-
-    // Remaining hours and minutes within the current day
-    const msToday = diffMs % (1000*60*60*24);
-    const hours = Math.floor(msToday / (1000*60*60));
-    const minutes = Math.floor((msToday % (1000*60*60)) / (1000*60));
-
-    // Update HTML
-    document.getElementById('ageClock').textContent = `${years} years, ${months} months, ${days} days`;
-    document.getElementById('subClock').textContent = `${hours} hours, ${minutes} minutes`;
-}
-
-setInterval(updateClock, 60000);
-updateClock();
-</script>
-
+    updateAge();
+    setInterval(updateAge, 60000);
+  </script>
 </body>
 </html>
