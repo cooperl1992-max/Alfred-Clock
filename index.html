@@ -14,14 +14,16 @@
     overflow: hidden;
     margin: 0;
     height: 100vh;
+    position: relative; /* enable z-index for layers */
   }
+
   h1 { font-size: 2.4em; margin-bottom: 10px; }
-  h2 { margin-top: 30px; font-size: 1.6em; }
+  h2 { margin-top: 60px; font-size: 1.6em; } /* larger gap before life events */
   .info { font-size: 1.2em; margin: 4px 0; }
   .info span { font-weight: 600; }
   .age { font-size: 1.8em; margin-top: 20px; }
   .sub-age { font-size: 1.1em; color: #ccc; }
-  .event { font-size: 1.2em; margin: 6px 0; }
+  .event { font-size: 1.2em; margin: 6px 0; position: relative; z-index: 2; }
 
   /* Stars */
   .star {
@@ -30,20 +32,24 @@
     border-radius: 50%;
     opacity: 0.8;
     animation: drift linear infinite;
+    z-index: 0;
   }
+
   @keyframes drift {
     0% { transform: translate(0px,0px); opacity:0.8; }
     50% { opacity:0.3; }
     100% { transform: translate(var(--x-drift), var(--y-drift)); opacity:0.8; }
   }
 
-  /* Rocket */
+  /* Rocket behind text */
   .rocket {
     position: absolute;
     font-size: 2em;
     left: -50px;
     animation: fly 5s linear forwards;
+    z-index: 1; /* behind text but in front of stars */
   }
+
   @keyframes fly {
     0% { transform: translateX(0) translateY(0); opacity:1; }
     100% { transform: translateX(120vw) translateY(-50px); opacity:0; }
@@ -70,9 +76,10 @@
 <script>
 const birthDate = new Date('2025-09-11T12:31:00+01:00');
 
+// Age clock
 function updateAge() {
   const now = new Date();
-  let diff = now - birthDate;
+  const diff = now - birthDate;
   const totalDays = Math.floor(diff / (1000*60*60*24));
   const years = Math.floor(totalDays / 365.25);
   const months = Math.floor((totalDays % 365.25) / 30.44);
@@ -103,7 +110,7 @@ for(let i=0;i<starCount;i++){
   document.body.appendChild(star);
 }
 
-// Rockets
+// Rocket flyby
 function launchRocket(){
   const rocket=document.createElement('div');
   rocket.className='rocket';
