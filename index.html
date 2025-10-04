@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Alfred's Age Clock</title>
+<title>Alfred James Cooper-Matthews - Age Clock</title>
 <style>
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -20,7 +20,7 @@
     font-size: 1.2em;
     margin: 4px 0;
   }
-  .dob {
+  .info span {
     font-weight: 600;
   }
   .age {
@@ -37,16 +37,18 @@
 
 <h1>Alfred James Cooper-Matthews</h1>
 
-<div class="info dob">D.O.B. 👶  &nbsp; 11th September 2025</div>
-<div class="info">Birthplace 🏥 &nbsp; Nottinghamshire, England</div>
-<div class="info">Time ⏰ &nbsp; 10:52 AM</div>
-<div class="info">Birthweight ⚖️ &nbsp; 8 lb 2 oz</div>
+<div class="info"><span>D.O.B. 👶</span> 11th September 2025</div>
+<div class="info"><span>Birthplace 🏥</span> City Hospital (Nottingham)</div>
+<div class="info"><span>Time ⏰</span> 12:31 PM (GMT)</div>
+<div class="info"><span>Birthweight ⚖️</span> 8 lb 7 oz</div>
+<div class="info"><span>Star sign ♍</span> Virgo</div>
+<div class="info"><span>Chinese zodiac 🐍</span> Snake</div>
 
 <div id="age" class="age">Loading...</div>
 <div id="subAge" class="sub-age"></div>
 
 <script>
-  const birthDate = new Date('2025-09-11T10:52:00+01:00');
+  const birthDate = new Date('2025-09-11T12:31:00+01:00');
 
   function updateAge() {
     const now = new Date();
