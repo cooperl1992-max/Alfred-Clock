@@ -12,11 +12,12 @@
     color: #fff;
     padding-top: 40px;
     overflow: hidden;
+    margin:0;
+    height:100vh;
   }
   h1 {
     font-size: 2.4em;
     margin-bottom: 10px;
-    text-shadow: 0 0 8px #fff;
   }
   .info {
     font-size: 1.2em;
@@ -34,33 +35,20 @@
     color: #ccc;
   }
 
-  /* Starfield effect */
-  body::before {
-    content: '';
-    position: fixed;
-    top:0; left:0; right:0; bottom:0;
-    background: transparent;
-    box-shadow: 
-      100px 200px 1px white,
-      300px 400px 1px white,
-      500px 100px 1px white,
-      700px 300px 1px white,
-      900px 500px 1px white,
-      1200px 200px 1px white,
-      1500px 600px 1px white,
-      1700px 100px 1px white,
-      1900px 400px 1px white,
-      2100px 300px 1px white;
-    width: 1px;
-    height: 1px;
-    animation: twinkle 5s linear infinite;
+  /* Starfield animation */
+  .star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: moveStar linear infinite;
   }
 
-  @keyframes twinkle {
-    0%, 100% { opacity: 0.8; }
+  @keyframes moveStar {
+    0% { transform: translateY(0px); opacity: 0.8; }
     50% { opacity: 0.3; }
+    100% { transform: translateY(1000px); opacity: 0.8; }
   }
-
 </style>
 </head>
 <body>
@@ -99,6 +87,20 @@
 
   updateAge();
   setInterval(updateAge, 60000);
+
+  // Generate starfield
+  const starCount = 100;
+  for (let i = 0; i < starCount; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    const size = Math.random() * 2 + 1;
+    star.style.width = size + 'px';
+    star.style.height = size + 'px';
+    star.style.left = Math.random() * window.innerWidth + 'px';
+    star.style.top = Math.random() * window.innerHeight + 'px';
+    star.style.animationDuration = (5 + Math.random() * 10) + 's';
+    document.body.appendChild(star);
+  }
 </script>
 
 </body>
