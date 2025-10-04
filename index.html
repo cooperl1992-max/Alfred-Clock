@@ -1,98 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Alfred James Cooper-Matthews - Age Clock</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alfred's Age Clock</title>
 <style>
   body {
-    font-family: Arial, sans-serif;
-    background: #f9f6f2;
-    color: #333;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     text-align: center;
-    padding: 30px;
+    background-color: #f9f9ff;
+    color: #333;
+    padding-top: 40px;
   }
-  h1 { font-size: 2.4rem; margin-bottom: 8px; }
-  .details { font-size: 1.05rem; line-height: 1.8; margin-bottom: 18px; }
-  .details span { font-weight: 600; }
-  .age-main { font-size: 1.8rem; font-weight: 700; margin-top: 18px; }
-  .age-sub { font-size: 1.1rem; color: #666; margin-top: 6px; }
-  @media (max-width:480px) {
-    h1 { font-size: 1.6rem; }
-    .age-main { font-size: 1.4rem; }
-    .age-sub { font-size: 1rem; }
+  h1 {
+    font-size: 2.4em;
+    margin-bottom: 10px;
+  }
+  .info {
+    font-size: 1.2em;
+    margin: 4px 0;
+  }
+  .dob {
+    font-weight: 600;
+  }
+  .age {
+    font-size: 1.8em;
+    margin-top: 20px;
+  }
+  .sub-age {
+    font-size: 1.1em;
+    color: #555;
   }
 </style>
 </head>
 <body>
 
-  <h1>Alfred James Cooper-Matthews</h1>
+<h1>Alfred Cooper</h1>
 
-  <div class="details">
-    <div><span>Birthplace 🏥:</span> City Hospital (Nottingham)</div>
-    <div><span>Time ⏰:</span> 12:31 pm (GMT)</div>
-    <div><span>Birthweight ⚖️:</span> 8 lb 7 oz</div>
-    <div><span>D.O.B. 👶:</span> 11 September 2025</div>
-    <div><span>Star sign ♍:</span> Virgo</div>
-    <div><span>Chinese zodiac 🐍:</span> Snake</div>
-  </div>
+<div class="info dob">D.O.B. 👶  &nbsp; 11th September 2025</div>
+<div class="info">Birthplace 🏥 &nbsp; Nottinghamshire, England</div>
+<div class="info">Time ⏰ &nbsp; 10:52 AM</div>
+<div class="info">Birthweight ⚖️ &nbsp; 8 lb 2 oz</div>
 
-  <div class="age-main" id="ageMain">Loading…</div>
-  <div class="age-sub" id="ageSub"></div>
+<div id="age" class="age">Loading...</div>
+<div id="subAge" class="sub-age"></div>
 
 <script>
-  // Birth date and time (local timezone, not UTC)
-  const birthDate = new Date(2025, 8, 11, 12, 31, 0); // 11 Sep 2025 12:31 local
+  const birthDate = new Date('2025-09-11T10:52:00+01:00');
 
-  function updateClock() {
+  function updateAge() {
     const now = new Date();
-    if (now < birthDate) {
-      document.getElementById('ageMain').textContent = 'Birth date is in the future.';
-      document.getElementById('ageSub').textContent = '';
-      return;
-    }
+    let diff = now - birthDate;
 
-    // Calculate calendar-based years, months, days
-    let years = now.getFullYear() - birthDate.getFullYear();
-    let months = now.getMonth() - birthDate.getMonth();
-    let days = now.getDate() - birthDate.getDate();
+    const totalMinutes = Math.floor(diff / (1000 * 60));
+    const totalHours = Math.floor(diff / (1000 * 60 * 60));
+    const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-    if (days < 0) {
-      months--;
-      const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
-      days += prevMonth.getDate();
-    }
-    if (months < 0) {
-      years--;
-      months += 12;
-    }
+    const years = Math.floor(totalDays / 365.25);
+    const months = Math.floor((totalDays % 365.25) / 30.44);
+    const days = Math.floor(totalDays - (years * 365.25) - (months * 30.44));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
 
-    // Build the last anniversary moment in local time
-    const lastAnniv = new Date(
-      birthDate.getFullYear() + years,
-      birthDate.getMonth() + months,
-      birthDate.getDate() + days,
-      birthDate.getHours(),
-      birthDate.getMinutes(),
-      birthDate.getSeconds()
-    );
-
-    // If lastAnniv is in the future (due to time difference), subtract one day
-    if (lastAnniv > now) lastAnniv.setDate(lastAnniv.getDate() - 1);
-
-    // Hours & minutes since lastAnniv
-    const diffMs = now - lastAnniv;
-    const hours = Math.floor(diffMs / (1000 * 60 * 60));
-    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-
-    document.getElementById('ageMain').textContent =
+    document.getElementById('age').innerText = 
       `${years} years, ${months} months, ${days} days`;
-    document.getElementById('ageSub').textContent =
+    document.getElementById('subAge').innerText = 
       `${hours} hours, ${minutes} minutes`;
   }
 
-  updateClock();
-  setInterval(updateClock, 60000);
+  updateAge();
+  setInterval(updateAge, 60000);
 </script>
 
 </body>
