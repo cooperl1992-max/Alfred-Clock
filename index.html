@@ -1,89 +1,99 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Alfred James Cooper-Matthews - Age Clock</title>
-  <style>
-    body {
-      background-color: #f2f2f2;
-      color: #333;
-      font-family: 'Arial', sans-serif;
-      text-align: center;
-      padding-top: 100px;
-    }
-    h1 {
-      font-size: 2.6em;
-      margin-bottom: 10px;
-    }
-    .details {
-      font-size: 1.2em;
-      line-height: 1.8em;
-    }
-    .details span {
-      font-weight: bold;
-    }
-    #age {
-      font-size: 1.6em;
-      margin-top: 30px;
-      line-height: 1.5em;
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Alfred James Cooper-Matthews - Age Clock</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f9f6f2;
+    color: #333;
+    text-align: center;
+    padding: 30px;
+  }
+  h1 { font-size: 2.4rem; margin-bottom: 8px; }
+  .details { font-size: 1.05rem; line-height: 1.8; margin-bottom: 18px; }
+  .details span { font-weight: 600; }
+  .age-main { font-size: 1.8rem; font-weight: 700; margin-top: 18px; }
+  .age-sub { font-size: 1.1rem; color: #666; margin-top: 6px; }
+  @media (max-width:480px) {
+    h1 { font-size: 1.6rem; }
+    .age-main { font-size: 1.4rem; }
+    .age-sub { font-size: 1rem; }
+  }
+</style>
 </head>
 <body>
+
   <h1>Alfred James Cooper-Matthews</h1>
 
   <div class="details">
-    <div><span>D.O.B 👶:</span> 11th September 2025</div>
-    <div><span>Birthplace 🏥:</span> City Hospital, Nottingham</div>
+    <div><span>Birthplace 🏥:</span> City Hospital (Nottingham)</div>
     <div><span>Time ⏰:</span> 12:31 pm (GMT)</div>
     <div><span>Birthweight ⚖️:</span> 8 lb 7 oz</div>
-    <div><span>Star Sign ♍:</span> Virgo</div>
-    <div><span>Chinese Zodiac 🐍:</span> Snake</div>
+    <div><span>D.O.B. 👶:</span> 11 September 2025</div>
+    <div><span>Star sign ♍:</span> Virgo</div>
+    <div><span>Chinese zodiac 🐍:</span> Snake</div>
   </div>
 
-  <h2 id="age"></h2>
+  <div class="age-main" id="ageMain">Loading…</div>
+  <div class="age-sub" id="ageSub"></div>
 
-  <script>
-    function updateAge() {
-      // Alfred's birth date and time in UK local time (BST)
-      const birthDate = new Date(Date.UTC(2025, 8, 11, 11, 31, 0)); 
-      const now = new Date();
+<script>
+  // Birth date and time (local timezone, not UTC)
+  const birthDate = new Date(2025, 8, 11, 12, 31, 0); // 11 Sep 2025 12:31 local
 
-      // Convert now to UTC for accurate comparison
-      const diff = now.getTime() - birthDate.getTime();
-
-      let years = now.getUTCFullYear() - birthDate.getUTCFullYear();
-      let months = now.getUTCMonth() - birthDate.getUTCMonth();
-      let days = now.getUTCDate() - birthDate.getUTCDate();
-
-      if (days < 0) {
-        const prevMonth = new Date(now.getUTCFullYear(), now.getUTCMonth(), 0);
-        days += prevMonth.getDate();
-        months--;
-      }
-      if (months < 0) {
-        months += 12;
-        years--;
-      }
-
-      // Work out remainder (hours/minutes) from difference in milliseconds
-      const latestFullDate = new Date(birthDate);
-      latestFullDate.setUTCFullYear(birthDate.getUTCFullYear() + years);
-      latestFullDate.setUTCMonth(birthDate.getUTCMonth() + months);
-      latestFullDate.setUTCDate(birthDate.getUTCDate() + days);
-
-      const remainder = now - latestFullDate;
-      const hours = Math.floor(remainder / (1000 * 60 * 60));
-      const minutes = Math.floor((remainder / (1000 * 60)) % 60);
-
-      document.getElementById("age").innerHTML =
-        `${years} years, ${months} months, ${days} days<br>` +
-        `${hours} hours, ${minutes} minutes`;
+  function updateClock() {
+    const now = new Date();
+    if (now < birthDate) {
+      document.getElementById('ageMain').textContent = 'Birth date is in the future.';
+      document.getElementById('ageSub').textContent = '';
+      return;
     }
 
-    updateAge();
-    setInterval(updateAge, 60000);
-  </script>
+    // Calculate calendar-based years, months, days
+    let years = now.getFullYear() - birthDate.getFullYear();
+    let months = now.getMonth() - birthDate.getMonth();
+    let days = now.getDate() - birthDate.getDate();
+
+    if (days < 0) {
+      months--;
+      const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+      days += prevMonth.getDate();
+    }
+    if (months < 0) {
+      years--;
+      months += 12;
+    }
+
+    // Build the last anniversary moment in local time
+    const lastAnniv = new Date(
+      birthDate.getFullYear() + years,
+      birthDate.getMonth() + months,
+      birthDate.getDate() + days,
+      birthDate.getHours(),
+      birthDate.getMinutes(),
+      birthDate.getSeconds()
+    );
+
+    // If lastAnniv is in the future (due to time difference), subtract one day
+    if (lastAnniv > now) lastAnniv.setDate(lastAnniv.getDate() - 1);
+
+    // Hours & minutes since lastAnniv
+    const diffMs = now - lastAnniv;
+    const hours = Math.floor(diffMs / (1000 * 60 * 60));
+    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+    document.getElementById('ageMain').textContent =
+      `${years} years, ${months} months, ${days} days`;
+    document.getElementById('ageSub').textContent =
+      `${hours} hours, ${minutes} minutes`;
+  }
+
+  updateClock();
+  setInterval(updateClock, 60000);
+</script>
+
 </body>
 </html>
