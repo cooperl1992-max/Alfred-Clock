@@ -35,6 +35,7 @@
     color: #ccc;
   }
 
+  /* Stars */
   .star {
     position: absolute;
     background: white;
@@ -47,6 +48,19 @@
     0% { transform: translate(0px, 0px); opacity: 0.8; }
     50% { opacity: 0.3; }
     100% { transform: translate(var(--x-drift), var(--y-drift)); opacity: 0.8; }
+  }
+
+  /* Rocket */
+  .rocket {
+    position: absolute;
+    font-size: 2em;
+    left: -50px;
+    animation: fly 5s linear forwards;
+  }
+
+  @keyframes fly {
+    0% { transform: translateX(0) translateY(0); opacity: 1; }
+    100% { transform: translateX(120vw) translateY(-50px); opacity: 0; }
   }
 </style>
 </head>
@@ -97,16 +111,29 @@
     star.style.height = size + 'px';
     star.style.left = Math.random() * window.innerWidth + 'px';
     star.style.top = Math.random() * window.innerHeight + 'px';
-    
-    // Random drift values for natural movement
-    const xDrift = (Math.random() * 20 - 10) + 'px';  // left-right drift
-    const yDrift = (Math.random() * 50 + 50) + 'px';  // downward drift
+    const xDrift = (Math.random() * 20 - 10) + 'px';
+    const yDrift = (Math.random() * 50 + 50) + 'px';
     star.style.setProperty('--x-drift', xDrift);
     star.style.setProperty('--y-drift', yDrift);
-    
     star.style.animationDuration = (5 + Math.random() * 10) + 's';
     document.body.appendChild(star);
   }
+
+  // Rocket flyby function with random 10–20s interval
+  function launchRocket() {
+    const rocket = document.createElement('div');
+    rocket.className = 'rocket';
+    rocket.style.top = (Math.random() * 60 + 10) + '%'; // random vertical position
+    rocket.innerText = '🚀';
+    document.body.appendChild(rocket);
+
+    setTimeout(() => {
+      rocket.remove();
+      setTimeout(launchRocket, Math.random() * 10000 + 10000); // 10–20s next rocket
+    }, 5000); // matches animation duration
+  }
+
+  setTimeout(launchRocket, Math.random() * 10000 + 10000);
 </script>
 
 </body>
