@@ -13,7 +13,7 @@
       padding-top: 100px;
     }
     h1 {
-      font-size: 2.4em;
+      font-size: 2.6em;
       margin-bottom: 10px;
     }
     .details {
@@ -24,7 +24,7 @@
       font-weight: bold;
     }
     #age {
-      font-size: 1.5em;
+      font-size: 1.6em;
       margin-top: 30px;
       line-height: 1.5em;
     }
@@ -34,27 +34,31 @@
   <h1>Alfred James Cooper-Matthews</h1>
 
   <div class="details">
-    <div><span>D.O.B 👶:</span> 12th September 2025</div>
+    <div><span>D.O.B 👶:</span> 11th September 2025</div>
     <div><span>Birthplace 🏥:</span> City Hospital, Nottingham</div>
     <div><span>Time ⏰:</span> 12:31 pm (GMT)</div>
     <div><span>Birthweight ⚖️:</span> 8 lb 7 oz</div>
     <div><span>Star Sign ♍:</span> Virgo</div>
-    <div><span>Chinese Zodiac 🐉:</span> Dragon</div>
+    <div><span>Chinese Zodiac 🐍:</span> Snake</div>
   </div>
 
   <h2 id="age"></h2>
 
   <script>
     function updateAge() {
-      const birthDate = new Date("2025-09-12T12:31:00+01:00"); // Local UK time
+      // Alfred's birth date and time in UK local time (BST)
+      const birthDate = new Date(Date.UTC(2025, 8, 11, 11, 31, 0)); 
       const now = new Date();
 
-      let years = now.getFullYear() - birthDate.getFullYear();
-      let months = now.getMonth() - birthDate.getMonth();
-      let days = now.getDate() - birthDate.getDate();
+      // Convert now to UTC for accurate comparison
+      const diff = now.getTime() - birthDate.getTime();
+
+      let years = now.getUTCFullYear() - birthDate.getUTCFullYear();
+      let months = now.getUTCMonth() - birthDate.getUTCMonth();
+      let days = now.getUTCDate() - birthDate.getUTCDate();
 
       if (days < 0) {
-        const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+        const prevMonth = new Date(now.getUTCFullYear(), now.getUTCMonth(), 0);
         days += prevMonth.getDate();
         months--;
       }
@@ -63,15 +67,15 @@
         years--;
       }
 
-      // Calculate remaining hours and minutes
-      const thisMonthDate = new Date(birthDate);
-      thisMonthDate.setFullYear(birthDate.getFullYear() + years);
-      thisMonthDate.setMonth(birthDate.getMonth() + months);
-      thisMonthDate.setDate(birthDate.getDate() + days);
+      // Work out remainder (hours/minutes) from difference in milliseconds
+      const latestFullDate = new Date(birthDate);
+      latestFullDate.setUTCFullYear(birthDate.getUTCFullYear() + years);
+      latestFullDate.setUTCMonth(birthDate.getUTCMonth() + months);
+      latestFullDate.setUTCDate(birthDate.getUTCDate() + days);
 
-      const diffMs = now - thisMonthDate;
-      const hours = Math.floor(diffMs / (1000 * 60 * 60));
-      const minutes = Math.floor((diffMs / (1000 * 60)) % 60);
+      const remainder = now - latestFullDate;
+      const hours = Math.floor(remainder / (1000 * 60 * 60));
+      const minutes = Math.floor((remainder / (1000 * 60)) % 60);
 
       document.getElementById("age").innerHTML =
         `${years} years, ${months} months, ${days} days<br>` +
