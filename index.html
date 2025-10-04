@@ -12,8 +12,8 @@
     color: #fff;
     padding-top: 40px;
     overflow: hidden;
-    margin:0;
-    height:100vh;
+    margin: 0;
+    height: 100vh;
   }
   h1 {
     font-size: 2.4em;
@@ -35,19 +35,18 @@
     color: #ccc;
   }
 
-  /* Starfield animation */
   .star {
     position: absolute;
     background: white;
     border-radius: 50%;
     opacity: 0.8;
-    animation: moveStar linear infinite;
+    animation: drift linear infinite;
   }
 
-  @keyframes moveStar {
-    0% { transform: translateY(0px); opacity: 0.8; }
+  @keyframes drift {
+    0% { transform: translate(0px, 0px); opacity: 0.8; }
     50% { opacity: 0.3; }
-    100% { transform: translateY(1000px); opacity: 0.8; }
+    100% { transform: translate(var(--x-drift), var(--y-drift)); opacity: 0.8; }
   }
 </style>
 </head>
@@ -88,8 +87,8 @@
   updateAge();
   setInterval(updateAge, 60000);
 
-  // Generate starfield
-  const starCount = 100;
+  // Generate drifting starfield
+  const starCount = 120;
   for (let i = 0; i < starCount; i++) {
     const star = document.createElement('div');
     star.className = 'star';
@@ -98,6 +97,13 @@
     star.style.height = size + 'px';
     star.style.left = Math.random() * window.innerWidth + 'px';
     star.style.top = Math.random() * window.innerHeight + 'px';
+    
+    // Random drift values for natural movement
+    const xDrift = (Math.random() * 20 - 10) + 'px';  // left-right drift
+    const yDrift = (Math.random() * 50 + 50) + 'px';  // downward drift
+    star.style.setProperty('--x-drift', xDrift);
+    star.style.setProperty('--y-drift', yDrift);
+    
     star.style.animationDuration = (5 + Math.random() * 10) + 's';
     document.body.appendChild(star);
   }
