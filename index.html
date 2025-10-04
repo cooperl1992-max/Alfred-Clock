@@ -15,25 +15,13 @@
     margin: 0;
     height: 100vh;
   }
-  h1 {
-    font-size: 2.4em;
-    margin-bottom: 10px;
-  }
-  .info {
-    font-size: 1.2em;
-    margin: 4px 0;
-  }
-  .info span {
-    font-weight: 600;
-  }
-  .age {
-    font-size: 1.8em;
-    margin-top: 20px;
-  }
-  .sub-age {
-    font-size: 1.1em;
-    color: #ccc;
-  }
+  h1 { font-size: 2.4em; margin-bottom: 10px; }
+  h2 { margin-top: 30px; font-size: 1.6em; }
+  .info { font-size: 1.2em; margin: 4px 0; }
+  .info span { font-weight: 600; }
+  .age { font-size: 1.8em; margin-top: 20px; }
+  .sub-age { font-size: 1.1em; color: #ccc; }
+  .event { font-size: 1.2em; margin: 6px 0; }
 
   /* Stars */
   .star {
@@ -43,11 +31,10 @@
     opacity: 0.8;
     animation: drift linear infinite;
   }
-
   @keyframes drift {
-    0% { transform: translate(0px, 0px); opacity: 0.8; }
-    50% { opacity: 0.3; }
-    100% { transform: translate(var(--x-drift), var(--y-drift)); opacity: 0.8; }
+    0% { transform: translate(0px,0px); opacity:0.8; }
+    50% { opacity:0.3; }
+    100% { transform: translate(var(--x-drift), var(--y-drift)); opacity:0.8; }
   }
 
   /* Rocket */
@@ -57,10 +44,9 @@
     left: -50px;
     animation: fly 5s linear forwards;
   }
-
   @keyframes fly {
-    0% { transform: translateX(0) translateY(0); opacity: 1; }
-    100% { transform: translateX(120vw) translateY(-50px); opacity: 0; }
+    0% { transform: translateX(0) translateY(0); opacity:1; }
+    100% { transform: translateX(120vw) translateY(-50px); opacity:0; }
   }
 </style>
 </head>
@@ -78,63 +64,105 @@
 <div id="age" class="age">Loading...</div>
 <div id="subAge" class="sub-age"></div>
 
+<h2>Upcoming Life Events</h2>
+<div id="events" style="position: relative;"></div>
+
 <script>
-  const birthDate = new Date('2025-09-11T12:31:00+01:00');
+const birthDate = new Date('2025-09-11T12:31:00+01:00');
 
-  function updateAge() {
-    const now = new Date();
-    let diff = now - birthDate;
+function updateAge() {
+  const now = new Date();
+  let diff = now - birthDate;
+  const totalDays = Math.floor(diff / (1000*60*60*24));
+  const years = Math.floor(totalDays / 365.25);
+  const months = Math.floor((totalDays % 365.25) / 30.44);
+  const days = Math.floor(totalDays - (years*365.25) - (months*30.44));
+  const hours = Math.floor((diff/(1000*60*60))%24);
+  const minutes = Math.floor((diff/(1000*60))%60);
 
-    const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const years = Math.floor(totalDays / 365.25);
-    const months = Math.floor((totalDays % 365.25) / 30.44);
-    const days = Math.floor(totalDays - (years * 365.25) - (months * 30.44));
-    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+  document.getElementById('age').innerText = `${years} years, ${months} months, ${days} days`;
+  document.getElementById('subAge').innerText = `${hours} hours, ${minutes} minutes`;
+}
 
-    document.getElementById('age').innerText = 
-      `${years} years, ${months} months, ${days} days`;
-    document.getElementById('subAge').innerText = 
-      `${hours} hours, ${minutes} minutes`;
+updateAge();
+setInterval(updateAge,60000);
+
+// Stars
+const starCount = 120;
+for(let i=0;i<starCount;i++){
+  const star=document.createElement('div');
+  star.className='star';
+  const size=Math.random()*2+1;
+  star.style.width=size+'px';
+  star.style.height=size+'px';
+  star.style.left=Math.random()*window.innerWidth+'px';
+  star.style.top=Math.random()*window.innerHeight+'px';
+  star.style.setProperty('--x-drift',(Math.random()*20-10)+'px');
+  star.style.setProperty('--y-drift',(Math.random()*50+50)+'px');
+  star.style.animationDuration=(5+Math.random()*10)+'s';
+  document.body.appendChild(star);
+}
+
+// Rockets
+function launchRocket(){
+  const rocket=document.createElement('div');
+  rocket.className='rocket';
+  rocket.style.top=(Math.random()*60+10)+'%';
+  rocket.innerText='🚀';
+  document.body.appendChild(rocket);
+  setTimeout(()=>{
+    rocket.remove();
+    setTimeout(launchRocket, Math.random()*10000+10000);
+  },5000);
+}
+setTimeout(launchRocket, Math.random()*10000+10000);
+
+// Life events
+const lifeEvents=[
+  {name:"Birthday", type:"birthday", date:new Date("2026-09-11T12:31:00+01:00")},
+  {name:"Christmas", date:new Date("2025-12-25T00:00:00+00:00")},
+  {name:"Christening", date:new Date("2025-10-11T14:00:00+01:00")}
+];
+
+function getOrdinal(n){
+  if(n%100>=11 && n%100<=13) return n+"th";
+  switch(n%10){ case 1: return n+"st"; case 2: return n+"nd"; case 3: return n+"rd"; default: return n+"th";}
+}
+
+function getBackgroundForEvent(name){
+  switch(name.toLowerCase()){
+    case "birthday": return "🎉🎂🎈";
+    case "christmas": return "🎄❄️⛄";
+    case "christening": return "👼✨";
+    default: return "";
   }
+}
 
-  updateAge();
-  setInterval(updateAge, 60000);
+function updateCountdowns(){
+  const now=new Date();
+  const upcoming=lifeEvents.filter(e=>e.date>now).sort((a,b)=>a.date-b.date);
+  const eventsContainer=document.getElementById('events');
+  eventsContainer.innerHTML='';
+  upcoming.forEach(e=>{
+    const diff=e.date-now;
+    const days=Math.floor(diff/(1000*60*60*24));
+    const hours=Math.floor((diff/(1000*60*60))%24);
+    const minutes=Math.floor((diff/(1000*60))%60);
+    let displayName=e.name;
+    if(e.type==="birthday"){
+      const age=e.date.getFullYear()-birthDate.getFullYear();
+      displayName=getOrdinal(age)+" Birthday";
+    }
+    const bg=days===0?getBackgroundForEvent(e.name)+' ':'';
+    const div=document.createElement('div');
+    div.className='event';
+    div.innerHTML=`${bg}${displayName} 🎉: <span class="countdown">${days} days, ${hours} hours, ${minutes} minutes</span>`;
+    eventsContainer.appendChild(div);
+  });
+}
 
-  // Generate drifting starfield
-  const starCount = 120;
-  for (let i = 0; i < starCount; i++) {
-    const star = document.createElement('div');
-    star.className = 'star';
-    const size = Math.random() * 2 + 1;
-    star.style.width = size + 'px';
-    star.style.height = size + 'px';
-    star.style.left = Math.random() * window.innerWidth + 'px';
-    star.style.top = Math.random() * window.innerHeight + 'px';
-    const xDrift = (Math.random() * 20 - 10) + 'px';
-    const yDrift = (Math.random() * 50 + 50) + 'px';
-    star.style.setProperty('--x-drift', xDrift);
-    star.style.setProperty('--y-drift', yDrift);
-    star.style.animationDuration = (5 + Math.random() * 10) + 's';
-    document.body.appendChild(star);
-  }
-
-  // Rocket flyby function with random 10–20s interval
-  function launchRocket() {
-    const rocket = document.createElement('div');
-    rocket.className = 'rocket';
-    rocket.style.top = (Math.random() * 60 + 10) + '%'; // random vertical position
-    rocket.innerText = '🚀';
-    document.body.appendChild(rocket);
-
-    setTimeout(() => {
-      rocket.remove();
-      setTimeout(launchRocket, Math.random() * 10000 + 10000); // 10–20s next rocket
-    }, 5000); // matches animation duration
-  }
-
-  setTimeout(launchRocket, Math.random() * 10000 + 10000);
+updateCountdowns();
+setInterval(updateCountdowns,60000);
 </script>
-
 </body>
 </html>
